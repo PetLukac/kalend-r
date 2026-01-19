@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <title>WorkFlow Calendar – MVP prototyp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      background: #f5f7fb;
+      color: #111827;
+    }
+    header {
+      background: #ffffff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-tabs button {
+      border: none;
+      background: #e5edff;
+      color: #1d4ed8;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .nav-tabs button.active {
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+    main {
+      padding: 16px;
+      max-width: 1100px;
+      margin: 0 auto 80px auto;
+    }
+    section {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    }
+    section h2 {
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .sub {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      font-size: 11px;
+    }
+    .day {
+      background: #f3f4ff;
+      border-radius: 10px;
+      padding: 6px;
+      min-height: 60px;
+      position: relative;
+    }
+    .day span.date {
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 9px;
+      margin-top: 4px;
+      color: #ffffff;
+    }
+    .badge-shift { background: #3b82f6; }
+    .badge-law { background: #f59e0b; }
+    .badge-doc { background: #10b981; }
+    .badge-trip { background: #ec4899; }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .item {
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: #f9fafb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .item-sub {
+      font-size: 11px;
+      color: #6b7280;
+    }
+    .pill {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e5edff;
+      color: #1d4ed8;
+    }
+    .btn-primary {
+      border: none;
+      background: #1d4ed8;
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      border: none;
+      background: #e5edff;
+      color: #1d4ed8;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .col {
+      flex: 1 1 260px;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 0;
+      font-size: 11px;
+    }
+    footer button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #6b7280;
+    }
+    footer button.active {
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>WorkFlow Calendar – MVP</h1>
+    <div class="nav-tabs">
+      <button class="active">Dashboard</button>
+      <button>Kalendár</button>
+      <button>Príjmy</button>
+      <button>Doklady</button>
+      <button>Cesty</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section id="dashboard">
+      <h2>Prehľad dňa</h2>
+      <p class="sub">Dnešná zmena, najbližšie povinnosti a cestovanie</p>
+      <div class="row">
+        <div class="col">
+          <div class="item">
+            <div>
+              <div class="item-title">Dnešná zmena – ranná</div>
+              <div class="item-sub">06:00 – 14:00 • 8 hodín</div>
+            </div>
+            <span class="pill">Zmena</span>
+          </div>
+          <div class="item">
+            <div>
+              <div class="item-title">STK – vozidlo BA123XY</div>
+              <div class="item-sub">O 14 dní • individuálny interval</div>
+            </div>
+            <span class="pill">Kontrola</span>
+          </div>
+          <div class="item">
+            <div>
+              <div class="item-title">Platnosť občianskeho preukazu</div>
+              <div class="item-sub">Končí o 30 dní</div>
+            </div>
+            <span class="pill">Doklad</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="item">
+            <div>
+              <div class="item-title">Služobná cesta – Košice</div>
+              <div class="item-sub">Zajtra • 09:00 • 3 h cesty</div>
+            </div>
+            <button class="btn-secondary">Navigovať cez Mapy.cz</button>
+          </div>
+          <div class="item">
+            <div>
+              <div class="item-title">Daňové priznanie</div>
+              <div class="item-sub">Termín: 31. 3. • pripomienky aktívne</div>
+            </div>
+            <span class="pill">Legislatíva</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KALENDÁR -->
+    <section id="calendar">
+      <h2>Kalendár</h2>
+      <p class="sub">Zmeny, legislatívne povinnosti, doklady a cesty v jednom prehľade</p>
+      <div class="calendar-grid">
+        <div class="day">
+          <span class="date">1</span><br />
+          <span class="badge badge-shift">Ranná</span>
+        </div>
+        <div class="day">
+          <span class="date">2</span><br />
+          <span class="badge badge-trip">Cesta KE</span>
+        </div>
+        <div class="day">
+          <span class="date">3</span><br />
+          <span class="badge badge-law">Daňové priznanie</span>
+        </div>
+        <div class="day">
+          <span class="date">4</span><br />
+          <span class="badge badge-doc">OP končí</span>
+        </div>
+        <div class="day">
+          <span class="date">5</span>
+        </div>
+        <div class="day">
+          <span class="date">6</span>
+        </div>
+        <div class="day">
+          <span class="date">7</span>
+        </div>
+        <!-- ... doplniť ďalšie dni podľa potreby ... -->
+      </div>
+      <br />
+      <button class="btn-primary">+ Pridať udalosť</button>
+    </section>
+
+    <!-- PRÍJMY -->
+    <section id="income">
+      <h2>Príjmy</h2>
+      <p class="sub">Prehľad príjmov prepojený so zmenami</p>
+      <div class="list">
+        <div class="item">
+          <div>
+            <div class="item-title">Marec 2026</div>
+            <div class="item-sub">Odpracované: 168 hodín • Odhad: 1 450 €</div>
+          </div>
+          <button class="btn-secondary">Detail</button>
+        </div>
+        <div class="item">
+          <div>
+            <div class="item-title">Február 2026</div>
+            <div class="item-sub">Odpracované: 152 hodín • Skutočnosť: 1 320 €</div>
+          </div>
+          <button class="btn-secondary">Detail</button>
+        </div>
+      </div>
+      <br />
+      <button class="btn-primary">+ Pridať príjem</button>
+    </section>
+
+    <!-- OSOBNÉ DOKLADY -->
+    <section id="documents">
+      <h2>Osobné doklady</h2>
+      <p class="sub">Sledovanie platnosti dokladov a pripomienky</p>
+      <div class="list">
+        <div class="item">
+          <div>
+            <div class="item-title">Občiansky preukaz</div>
+            <div class="item-sub">Platnosť do: 12. 04. 2026 • upozornenia: 90/30/7 dní</div>
+          </div>
+          <span class="pill">Platný</span>
+        </div>
+        <div class="item">
+          <div>
+            <div class="item-title">Cestovný pas</div>
+            <div class="item-sub">Platnosť do: 01. 08. 2025 • upozornenia aktívne</div>
+          </div>
+          <span class="pill" style="background:#f97316;color:#fff;">Čoskoro končí</span>
+        </div>
+      </div>
+      <br />
+      <button class="btn-primary">+ Pridať doklad</button>
+    </section>
+
+    <!-- CESTY -->
+    <section id="trips">
+      <h2>Cestovanie a služobné cesty</h2>
+      <p class="sub">Udalosti s adresou a navigáciou cez Mapy.cz</p>
+      <div class="list">
+        <div class="item">
+          <div>
+            <div class="item-title">Služobná cesta – Košice</div>
+            <div class="item-sub">Dátum: 02. 03. 2026 • Odchod: 06:00 • Adresa: Hlavná 1, Košice</div>
+          </div>
+          <button class="btn-secondary">Navigovať cez Mapy.cz</button>
+        </div>
+        <div class="item">
+          <div>
+            <div class="item-title">Kontrola STK – BA123XY</div>
+            <div class="item-sub">STK stanica: Priemyselná 10, Bratislava</div>
+          </div>
+          <button class="btn-secondary">Navigovať cez Mapy.cz</button>
+        </div>
+      </div>
+      <br />
+      <button class="btn-primary">+ Pridať cestu</button>
+    </section>
+
+    <!-- REGIONÁLNE KONTAKTY -->
+    <section id="regional">
+      <h2>Regionálne kontakty</h2>
+      <p class="sub">Úrady, pohotovosti, lekári a lekárne podľa regiónu</p>
+      <div class="row">
+        <div class="col">
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Úrady</h3>
+          <div class="list">
+            <div class="item">
+              <div>
+                <div class="item-title">Daňový úrad Zvolen</div>
+                <div class="item-sub">Námestie SNP 1, Zvolen • Po–Pi 8:00–15:00</div>
+              </div>
+              <button class="btn-secondary">Navigovať</button>
+            </div>
+            <div class="item">
+              <div>
+                <div class="item-title">Mestský úrad Zvolen</div>
+                <div class="item-sub">Námestie slobody 22 • Po–Pi</div>
+              </div>
+              <button class="btn-secondary">Navigovať</button>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Zdravotnícke služby</h3>
+          <div class="list">
+            <div class="item">
+              <div>
+                <div class="item-title">Pohotovosť – dospelí</div>
+                <div class="item-sub">Nemocnica Zvolen • nonstop</div>
+              </div>
+              <button class="btn-secondary">Navigovať</button>
+            </div>
+            <div class="item">
+              <div>
+                <div class="item-title">Lekáreň – nonstop</div>
+                <div class="item-sub">Štúrova 5, Zvolen</div>
+              </div>
+              <button class="btn-secondary">Navigovať</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <button class="active">Dashboard</button>
+    <button>Kalendár</button>
+    <button>Príjmy</button>
+    <button>Doklady</button>
+    <button>Cesty</button>
+  </footer>
+</body>
+</html>
