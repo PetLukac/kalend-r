@@ -2,18 +2,32 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <title>WorkFlow Calendar – MVP prototyp</title>
+  <title>WorkFlow Calendar – Testovacia verzia</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --primary: #1d4ed8;
+      --primary-soft: #e5edff;
+      --text-main: #111827;
+      --text-sub: #6b7280;
+      --radius-card: 16px;
+      --shadow-soft: 0 1px 4px rgba(15, 23, 42, 0.06);
+    }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-      background: #f5f7fb;
-      color: #111827;
+      background: var(--bg);
+      color: var(--text-main);
     }
     header {
-      background: #ffffff;
-      padding: 12px 16px;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      padding: 10px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -23,79 +37,66 @@
       z-index: 10;
     }
     header h1 {
-      font-size: 18px;
+      font-size: 17px;
       margin: 0;
+      font-weight: 600;
     }
     .nav-tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      overflow-x: auto;
+      max-width: 60%;
     }
     .nav-tabs button {
       border: none;
-      background: #e5edff;
-      color: #1d4ed8;
-      padding: 6px 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 5px 10px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11px;
       cursor: pointer;
+      white-space: nowrap;
     }
     .nav-tabs button.active {
-      background: #1d4ed8;
+      background: var(--primary);
       color: #ffffff;
     }
     main {
-      padding: 16px;
+      padding: 14px;
       max-width: 1100px;
-      margin: 0 auto 80px auto;
+      margin: 0 auto 70px auto;
     }
     section {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 16px 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+      background: var(--card);
+      border-radius: var(--radius-card);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-soft);
+      display: none;
+    }
+    section.active {
+      display: block;
     }
     section h2 {
-      font-size: 16px;
+      font-size: 15px;
       margin-top: 0;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
+      font-weight: 600;
     }
     .sub {
       font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 12px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
     }
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      font-size: 11px;
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .day {
-      background: #f3f4ff;
-      border-radius: 10px;
-      padding: 6px;
-      min-height: 60px;
-      position: relative;
+    .col {
+      flex: 1 1 260px;
     }
-    .day span.date {
-      font-weight: 600;
-      font-size: 11px;
-    }
-    .badge {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 999px;
-      font-size: 9px;
-      margin-top: 4px;
-      color: #ffffff;
-    }
-    .badge-shift { background: #3b82f6; }
-    .badge-law { background: #f59e0b; }
-    .badge-doc { background: #10b981; }
-    .badge-trip { background: #ec4899; }
-
-    .list {
+    .card-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -108,48 +109,95 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
+    }
+    .item-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
     .item-title {
       font-weight: 600;
-      margin-bottom: 2px;
+      font-size: 13px;
     }
     .item-sub {
       font-size: 11px;
-      color: #6b7280;
+      color: var(--text-sub);
     }
     .pill {
       font-size: 10px;
       padding: 2px 8px;
       border-radius: 999px;
-      background: #e5edff;
-      color: #1d4ed8;
+      background: var(--primary-soft);
+      color: var(--primary);
+      white-space: nowrap;
+    }
+    .pill-warn {
+      background: #f97316;
+      color: #ffffff;
+    }
+    .pill-danger {
+      background: #dc2626;
+      color: #ffffff;
+    }
+    .pill-ok {
+      background: #10b981;
+      color: #ffffff;
     }
     .btn-primary {
       border: none;
-      background: #1d4ed8;
+      background: var(--primary);
       color: #ffffff;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 999px;
       font-size: 12px;
       cursor: pointer;
+      white-space: nowrap;
     }
     .btn-secondary {
       border: none;
-      background: #e5edff;
-      color: #1d4ed8;
+      background: var(--primary-soft);
+      color: var(--primary);
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 11px;
       cursor: pointer;
+      white-space: nowrap;
     }
-    .row {
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      font-size: 11px;
+    }
+    .day {
+      background: #f3f4ff;
+      border-radius: 10px;
+      padding: 5px;
+      min-height: 54px;
+      position: relative;
+    }
+    .day span.date {
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .dot-row {
+      margin-top: 4px;
       display: flex;
+      gap: 3px;
       flex-wrap: wrap;
-      gap: 12px;
     }
-    .col {
-      flex: 1 1 260px;
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
     }
+    .dot-shift { background: #3b82f6; }
+    .dot-law { background: #f59e0b; }
+    .dot-trip { background: #ec4899; }
+    .dot-doc { background: #10b981; }
+    .dot-pay { background: #8b5cf6; }
+
     footer {
       position: fixed;
       bottom: 0;
@@ -159,77 +207,124 @@
       border-top: 1px solid #e5e7eb;
       display: flex;
       justify-content: space-around;
-      padding: 6px 0;
+      padding: 5px 0;
       font-size: 11px;
     }
     footer button {
       border: none;
       background: transparent;
       cursor: pointer;
-      color: #6b7280;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    footer button span.icon {
+      font-size: 14px;
     }
     footer button.active {
-      color: #1d4ed8;
+      color: var(--primary);
       font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      header h1 {
+        font-size: 15px;
+      }
+      .nav-tabs {
+        max-width: 55%;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>WorkFlow Calendar – MVP</h1>
+    <h1>WorkFlow Calendar</h1>
     <div class="nav-tabs">
-      <button class="active">Dashboard</button>
-      <button>Kalendár</button>
-      <button>Príjmy</button>
-      <button>Doklady</button>
-      <button>Cesty</button>
+      <button class="tab-btn active" data-target="dashboard">Dashboard</button>
+      <button class="tab-btn" data-target="calendar">Kalendár</button>
+      <button class="tab-btn" data-target="duties">Povinnosti</button>
+      <button class="tab-btn" data-target="payments">Platby</button>
+      <button class="tab-btn" data-target="documents">Doklady</button>
+      <button class="tab-btn" data-target="trips">Cesty</button>
+      <button class="tab-btn" data-target="regional">Regionálne</button>
     </div>
   </header>
 
   <main>
     <!-- DASHBOARD -->
-    <section id="dashboard">
+    <section id="dashboard" class="active">
       <h2>Prehľad dňa</h2>
-      <p class="sub">Dnešná zmena, najbližšie povinnosti a cestovanie</p>
+      <p class="sub">Dnešná zmena, najbližšie povinnosti, platby a cesty</p>
       <div class="row">
         <div class="col">
-          <div class="item">
-            <div>
-              <div class="item-title">Dnešná zmena – ranná</div>
-              <div class="item-sub">06:00 – 14:00 • 8 hodín</div>
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Dnes</h3>
+          <div class="card-list">
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Dnešná zmena – ranná</div>
+                <div class="item-sub">06:00 – 14:00 • 8 hodín</div>
+              </div>
+              <span class="pill">Zmena</span>
             </div>
-            <span class="pill">Zmena</span>
-          </div>
-          <div class="item">
-            <div>
-              <div class="item-title">STK – vozidlo BA123XY</div>
-              <div class="item-sub">O 14 dní • individuálny interval</div>
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Platnosť občianskeho preukazu</div>
+                <div class="item-sub">Končí o 30 dní</div>
+              </div>
+              <span class="pill-warn pill">Doklad</span>
             </div>
-            <span class="pill">Kontrola</span>
-          </div>
-          <div class="item">
-            <div>
-              <div class="item-title">Platnosť občianskeho preukazu</div>
-              <div class="item-sub">Končí o 30 dní</div>
-            </div>
-            <span class="pill">Doklad</span>
           </div>
         </div>
         <div class="col">
-          <div class="item">
-            <div>
-              <div class="item-title">Služobná cesta – Košice</div>
-              <div class="item-sub">Zajtra • 09:00 • 3 h cesty</div>
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Najbližšie povinnosti</h3>
+          <div class="card-list">
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Daň z príjmu</div>
+                <div class="item-sub">Termín: 31. 03. • 20 dní do termínu</div>
+              </div>
+              <span class="pill">Legislatíva</span>
             </div>
-            <button class="btn-secondary">Navigovať cez Mapy.cz</button>
-          </div>
-          <div class="item">
-            <div>
-              <div class="item-title">Daňové priznanie</div>
-              <div class="item-sub">Termín: 31. 3. • pripomienky aktívne</div>
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">STK – vozidlo BA123XY</div>
+                <div class="item-sub">O 14 dní • individuálny interval</div>
+              </div>
+              <span class="pill">Kontrola</span>
             </div>
-            <span class="pill">Legislatíva</span>
           </div>
+        </div>
+        <div class="col">
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Najbližšie platby</h3>
+          <div class="card-list">
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Leasing – 250 €</div>
+                <div class="item-sub">Splatnosť: o 3 dni</div>
+              </div>
+              <button class="btn-secondary" onclick="payNow('Leasing – 250 €')">Zaplatiť teraz</button>
+            </div>
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Správa bytu – 120 €</div>
+                <div class="item-sub">Splatnosť: zajtra</div>
+              </div>
+              <button class="btn-secondary" onclick="payNow('Správa bytu – 120 €')">Zaplatiť teraz</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <h3 style="font-size:13px;margin:0 0 6px 0;">Najbližšia cesta</h3>
+      <div class="card-list">
+        <div class="item">
+          <div class="item-main">
+            <div class="item-title">Služobná cesta – Košice</div>
+            <div class="item-sub">Zajtra • 09:00 • 3 h cesty • Hlavná 1, Košice</div>
+          </div>
+          <button class="btn-secondary" onclick="navigateMapy('Hlavná 1, Košice')">Mapy.cz</button>
         </div>
       </div>
     </section>
@@ -237,81 +332,184 @@
     <!-- KALENDÁR -->
     <section id="calendar">
       <h2>Kalendár</h2>
-      <p class="sub">Zmeny, legislatívne povinnosti, doklady a cesty v jednom prehľade</p>
+      <p class="sub">Zmeny, povinnosti, platby, doklady a cesty v jednom prehľade</p>
       <div class="calendar-grid">
         <div class="day">
-          <span class="date">1</span><br />
-          <span class="badge badge-shift">Ranná</span>
+          <span class="date">1</span>
+          <div class="dot-row">
+            <div class="dot dot-shift" title="Zmena"></div>
+          </div>
         </div>
         <div class="day">
-          <span class="date">2</span><br />
-          <span class="badge badge-trip">Cesta KE</span>
+          <span class="date">2</span>
+          <div class="dot-row">
+            <div class="dot dot-trip" title="Cesta"></div>
+          </div>
         </div>
         <div class="day">
-          <span class="date">3</span><br />
-          <span class="badge badge-law">Daňové priznanie</span>
+          <span class="date">3</span>
+          <div class="dot-row">
+            <div class="dot dot-law" title="Daň z príjmu"></div>
+          </div>
         </div>
         <div class="day">
-          <span class="date">4</span><br />
-          <span class="badge badge-doc">OP končí</span>
+          <span class="date">4</span>
+          <div class="dot-row">
+            <div class="dot dot-doc" title="Doklad"></div>
+          </div>
         </div>
         <div class="day">
           <span class="date">5</span>
+          <div class="dot-row">
+            <div class="dot dot-pay" title="Platba"></div>
+          </div>
         </div>
-        <div class="day">
-          <span class="date">6</span>
-        </div>
-        <div class="day">
-          <span class="date">7</span>
-        </div>
+        <div class="day"><span class="date">6</span></div>
+        <div class="day"><span class="date">7</span></div>
         <!-- ... doplniť ďalšie dni podľa potreby ... -->
       </div>
       <br />
       <button class="btn-primary">+ Pridať udalosť</button>
     </section>
 
-    <!-- PRÍJMY -->
-    <section id="income">
-      <h2>Príjmy</h2>
-      <p class="sub">Prehľad príjmov prepojený so zmenami</p>
-      <div class="list">
-        <div class="item">
-          <div>
-            <div class="item-title">Marec 2026</div>
-            <div class="item-sub">Odpracované: 168 hodín • Odhad: 1 450 €</div>
+    <!-- POVINNOSTI (ÚRADNÉ + KONTROLY + SERVIS) -->
+    <section id="duties">
+      <h2>Povinnosti</h2>
+      <p class="sub">Daňové termíny, odvody, kontroly a servisné intervaly</p>
+      <div class="row">
+        <div class="col">
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Úradné termíny</h3>
+          <div class="card-list">
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Daň z príjmu</div>
+                <div class="item-sub">Termín: 31. 03. • pripomienky: 30/14/7 dní</div>
+              </div>
+              <span class="pill">Daň</span>
+            </div>
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">DPH – mesačne</div>
+                <div class="item-sub">Termín: 25. deň v mesiaci</div>
+              </div>
+              <span class="pill">DPH</span>
+            </div>
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Zákonné odvody</div>
+                <div class="item-sub">Sociálne a zdravotné • 8. deň v mesiaci</div>
+              </div>
+              <span class="pill">Odvody</span>
+            </div>
           </div>
-          <button class="btn-secondary">Detail</button>
         </div>
-        <div class="item">
-          <div>
-            <div class="item-title">Február 2026</div>
-            <div class="item-sub">Odpracované: 152 hodín • Skutočnosť: 1 320 €</div>
+        <div class="col">
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Kontroly a prehliadky</h3>
+          <div class="card-list">
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">STK – BA123XY</div>
+                <div class="item-sub">Ďalšia: 05. 06. 2026 • pripomienky: 60/30/7 dní</div>
+              </div>
+              <span class="pill">STK</span>
+            </div>
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Lekárska prehliadka – práca v noci</div>
+                <div class="item-sub">Ďalšia: 10. 11. 2026 • interval: 24 mesiacov</div>
+              </div>
+              <span class="pill">Lekár</span>
+            </div>
           </div>
-          <button class="btn-secondary">Detail</button>
+        </div>
+        <div class="col">
+          <h3 style="font-size:13px;margin:0 0 6px 0;">Servisné intervaly</h3>
+          <div class="card-list">
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Výmena oleja – BA123XY</div>
+                <div class="item-sub">Posledná: 120 000 km • interval: 15 000 km</div>
+              </div>
+              <span class="pill">Servis</span>
+            </div>
+            <div class="item">
+              <div class="item-main">
+                <div class="item-title">Servis kotla</div>
+                <div class="item-sub">Posledný: 01. 10. 2025 • interval: 12 mesiacov</div>
+              </div>
+              <span class="pill">Domácnosť</span>
+            </div>
+          </div>
         </div>
       </div>
       <br />
-      <button class="btn-primary">+ Pridať príjem</button>
+      <button class="btn-primary">+ Pridať povinnosť</button>
     </section>
 
-    <!-- OSOBNÉ DOKLADY -->
+    <!-- PLATBY -->
+    <section id="payments">
+      <h2>Platby</h2>
+      <p class="sub">Leasingy, úvery, správa bytu, energie a iné záväzky</p>
+      <div class="card-list">
+        <div class="item">
+          <div class="item-main">
+            <div class="item-title">Leasing – 250 €</div>
+            <div class="item-sub">Splatnosť: 15. deň v mesiaci • stav: 3 dni do splatnosti</div>
+          </div>
+          <button class="btn-primary" onclick="payNow('Leasing – 250 €')">Zaplatiť teraz</button>
+        </div>
+        <div class="item">
+          <div class="item-main">
+            <div class="item-title">Hypotéka – 480 €</div>
+            <div class="item-sub">Splatnosť: 20. deň v mesiaci • stav: 10 dní do splatnosti</div>
+          </div>
+          <button class="btn-secondary" onclick="payNow('Hypotéka – 480 €')">Zaplatiť teraz</button>
+        </div>
+        <div class="item">
+          <div class="item-main">
+            <div class="item-title">Správa bytu – 120 €</div>
+            <div class="item-sub">Splatnosť: 5. deň v mesiaci • stav: zajtra</div>
+          </div>
+          <button class="btn-primary" onclick="payNow('Správa bytu – 120 €')">Zaplatiť teraz</button>
+        </div>
+        <div class="item">
+          <div class="item-main">
+            <div class="item-title">Internet – 25 €</div>
+            <div class="item-sub">Splatnosť: 12. deň v mesiaci</div>
+          </div>
+          <button class="btn-secondary" onclick="payNow('Internet – 25 €')">Zaplatiť teraz</button>
+        </div>
+      </div>
+      <br />
+      <button class="btn-primary">+ Pridať platbu</button>
+      <p class="sub" style="margin-top:8px;">(V reálnej verzii tu môže byť QR platba alebo preklik do bankovej aplikácie.)</p>
+    </section>
+
+    <!-- DOKLADY -->
     <section id="documents">
       <h2>Osobné doklady</h2>
       <p class="sub">Sledovanie platnosti dokladov a pripomienky</p>
-      <div class="list">
+      <div class="card-list">
         <div class="item">
-          <div>
+          <div class="item-main">
             <div class="item-title">Občiansky preukaz</div>
             <div class="item-sub">Platnosť do: 12. 04. 2026 • upozornenia: 90/30/7 dní</div>
           </div>
-          <span class="pill">Platný</span>
+          <span class="pill-ok pill">Platný</span>
         </div>
         <div class="item">
-          <div>
+          <div class="item-main">
             <div class="item-title">Cestovný pas</div>
             <div class="item-sub">Platnosť do: 01. 08. 2025 • upozornenia aktívne</div>
           </div>
-          <span class="pill" style="background:#f97316;color:#fff;">Čoskoro končí</span>
+          <span class="pill-warn pill">Čoskoro končí</span>
+        </div>
+        <div class="item">
+          <div class="item-main">
+            <div class="item-title">Vodičský preukaz</div>
+            <div class="item-sub">Platnosť do: 10. 01. 2030</div>
+          </div>
+          <span class="pill-ok pill">Platný</span>
         </div>
       </div>
       <br />
@@ -320,22 +518,22 @@
 
     <!-- CESTY -->
     <section id="trips">
-      <h2>Cestovanie a služobné cesty</h2>
+      <h2>Cesty a služobné výjazdy</h2>
       <p class="sub">Udalosti s adresou a navigáciou cez Mapy.cz</p>
-      <div class="list">
+      <div class="card-list">
         <div class="item">
-          <div>
+          <div class="item-main">
             <div class="item-title">Služobná cesta – Košice</div>
-            <div class="item-sub">Dátum: 02. 03. 2026 • Odchod: 06:00 • Adresa: Hlavná 1, Košice</div>
+            <div class="item-sub">Dátum: 02. 03. 2026 • Odchod: 06:00 • Hlavná 1, Košice</div>
           </div>
-          <button class="btn-secondary">Navigovať cez Mapy.cz</button>
+          <button class="btn-secondary" onclick="navigateMapy('Hlavná 1, Košice')">Navigovať cez Mapy.cz</button>
         </div>
         <div class="item">
-          <div>
+          <div class="item-main">
             <div class="item-title">Kontrola STK – BA123XY</div>
             <div class="item-sub">STK stanica: Priemyselná 10, Bratislava</div>
           </div>
-          <button class="btn-secondary">Navigovať cez Mapy.cz</button>
+          <button class="btn-secondary" onclick="navigateMapy('Priemyselná 10, Bratislava')">Navigovať cez Mapy.cz</button>
         </div>
       </div>
       <br />
@@ -349,53 +547,108 @@
       <div class="row">
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Úrady</h3>
-          <div class="list">
+          <div class="card-list">
             <div class="item">
-              <div>
+              <div class="item-main">
                 <div class="item-title">Daňový úrad Zvolen</div>
                 <div class="item-sub">Námestie SNP 1, Zvolen • Po–Pi 8:00–15:00</div>
               </div>
-              <button class="btn-secondary">Navigovať</button>
+              <button class="btn-secondary" onclick="navigateMapy('Námestie SNP 1, Zvolen')">Navigovať</button>
             </div>
             <div class="item">
-              <div>
+              <div class="item-main">
                 <div class="item-title">Mestský úrad Zvolen</div>
-                <div class="item-sub">Námestie slobody 22 • Po–Pi</div>
+                <div class="item-sub">Námestie slobody 22, Zvolen</div>
               </div>
-              <button class="btn-secondary">Navigovať</button>
+              <button class="btn-secondary" onclick="navigateMapy('Námestie slobody 22, Zvolen')">Navigovať</button>
             </div>
           </div>
         </div>
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Zdravotnícke služby</h3>
-          <div class="list">
+          <div class="card-list">
             <div class="item">
-              <div>
+              <div class="item-main">
                 <div class="item-title">Pohotovosť – dospelí</div>
                 <div class="item-sub">Nemocnica Zvolen • nonstop</div>
               </div>
-              <button class="btn-secondary">Navigovať</button>
+              <button class="btn-secondary" onclick="navigateMapy('Nemocnica Zvolen')">Navigovať</button>
             </div>
             <div class="item">
-              <div>
+              <div class="item-main">
                 <div class="item-title">Lekáreň – nonstop</div>
                 <div class="item-sub">Štúrova 5, Zvolen</div>
               </div>
-              <button class="btn-secondary">Navigovať</button>
+              <button class="btn-secondary" onclick="navigateMapy('Štúrova 5, Zvolen')">Navigovať</button>
             </div>
           </div>
         </div>
       </div>
     </section>
-
   </main>
 
   <footer>
-    <button class="active">Dashboard</button>
-    <button>Kalendár</button>
-    <button>Príjmy</button>
-    <button>Doklady</button>
-    <button>Cesty</button>
+    <button class="tab-btn-foot active" data-target="dashboard">
+      <span class="icon">🏠</span>
+      <span>Dashboard</span>
+    </button>
+    <button class="tab-btn-foot" data-target="calendar">
+      <span class="icon">📅</span>
+      <span>Kalendár</span>
+    </button>
+    <button class="tab-btn-foot" data-target="duties">
+      <span class="icon">📌</span>
+      <span>Povinnosti</span>
+    </button>
+    <button class="tab-btn-foot" data-target="payments">
+      <span class="icon">💳</span>
+      <span>Platby</span>
+    </button>
+    <button class="tab-btn-foot" data-target="documents">
+      <span class="icon">🪪</span>
+      <span>Doklady</span>
+    </button>
+    <button class="tab-btn-foot" data-target="trips">
+      <span class="icon">🧭</span>
+      <span>Cesty</span>
+    </button>
   </footer>
+
+  <script>
+    // Prepínanie sekcií (header tabs + footer)
+    const sections = document.querySelectorAll('main section');
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const footButtons = document.querySelectorAll('.tab-btn-foot');
+
+    function showSection(id) {
+      sections.forEach(sec => {
+        sec.classList.toggle('active', sec.id === id);
+      });
+      tabButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.target === id);
+      });
+      footButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.target === id);
+      });
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => showSection(btn.dataset.target));
+    });
+    footButtons.forEach(btn => {
+      btn.addEventListener('click', () => showSection(btn.dataset.target));
+    });
+
+    // Mock funkcia priamej platby
+    function payNow(label) {
+      alert('Simulácia platby: ' + label + '\nV reálnej appke by sa otvorila banková appka alebo QR platba.');
+    }
+
+    // Navigácia cez Mapy.cz (web verzia)
+    function navigateMapy(address) {
+      const url = 'https://mapy.cz/zakladni?q=' + encodeURIComponent(address);
+      window.open(url, '_blank');
+    }
+  </script>
 </body>
 </html>
