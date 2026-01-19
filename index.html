@@ -2,43 +2,43 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <title>WorkFlow Calendar – Testovacia verzia</title>
+  <title>WorkFlow Calendar – detailná verzia</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
       --bg: #f5f7fb;
       --card: #ffffff;
-      --primary: #1d4ed8;
+      --primary: #2563eb;
       --primary-soft: #e5edff;
       --text-main: #111827;
       --text-sub: #6b7280;
+      --danger: #dc2626;
+      --success: #16a34a;
       --radius-card: 16px;
-      --shadow-soft: 0 1px 4px rgba(15, 23, 42, 0.06);
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
     }
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
       background: var(--bg);
       color: var(--text-main);
     }
-    header {
-      background: #ffffffcc;
-      backdrop-filter: blur(10px);
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+    .app-header {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 1px 6px rgba(15,23,42,0.12);
     }
-    header h1 {
-      font-size: 17px;
+    .app-header h1 {
       margin: 0;
+      font-size: 17px;
       font-weight: 600;
     }
     .nav-tabs {
@@ -59,71 +59,55 @@
     }
     .nav-tabs button.active {
       background: var(--primary);
-      color: #ffffff;
+      color: #fff;
     }
     main {
       padding: 14px;
       max-width: 1100px;
       margin: 0 auto 70px auto;
     }
-    section {
-      background: var(--card);
+    .section {
+      display: none;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(18px);
       border-radius: var(--radius-card);
       padding: 14px 16px;
       margin-bottom: 14px;
       box-shadow: var(--shadow-soft);
-      display: none;
     }
-    section.active {
-      display: block;
-    }
-    section h2 {
+    .section.active { display: block; }
+    .section h2 {
+      margin: 0 0 4px 0;
       font-size: 15px;
-      margin-top: 0;
-      margin-bottom: 4px;
       font-weight: 600;
     }
     .sub {
+      margin: 0 0 10px 0;
       font-size: 12px;
       color: var(--text-sub);
-      margin-bottom: 10px;
     }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .col {
-      flex: 1 1 260px;
-    }
-    .card-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 13px;
-    }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .col { flex: 1 1 260px; }
+    .card-list { display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
     .item {
       padding: 8px 10px;
       border-radius: 12px;
-      background: #f9fafb;
+      background: rgba(249,250,251,0.9);
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
     }
-    .item-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    .item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(15,23,42,0.12);
+      background: #ffffff;
     }
-    .item-title {
-      font-weight: 600;
-      font-size: 13px;
-    }
-    .item-sub {
-      font-size: 11px;
-      color: var(--text-sub);
-    }
+    .item-main { display: flex; flex-direction: column; gap: 2px; }
+    .item-title { font-weight: 600; font-size: 13px; }
+    .item-sub { font-size: 11px; color: var(--text-sub); }
     .pill {
       font-size: 10px;
       padding: 2px 8px;
@@ -132,37 +116,30 @@
       color: var(--primary);
       white-space: nowrap;
     }
-    .pill-warn {
-      background: #f97316;
-      color: #ffffff;
-    }
-    .pill-danger {
-      background: #dc2626;
-      color: #ffffff;
-    }
-    .pill-ok {
-      background: #10b981;
-      color: #ffffff;
-    }
-    .btn-primary {
+    .pill-ok { background: #16a34a; color: #fff; }
+    .pill-warn { background: #f97316; color: #fff; }
+    .pill-danger { background: #dc2626; color: #fff; }
+    .btn-primary, .btn-secondary, .btn-close {
       border: none;
-      background: var(--primary);
-      color: #ffffff;
-      padding: 7px 12px;
       border-radius: 999px;
+      padding: 7px 12px;
       font-size: 12px;
       cursor: pointer;
       white-space: nowrap;
     }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
     .btn-secondary {
-      border: none;
       background: var(--primary-soft);
       color: var(--primary);
-      padding: 6px 10px;
-      border-radius: 999px;
+    }
+    .btn-close {
+      background: transparent;
+      color: var(--text-sub);
+      padding: 4px 8px;
       font-size: 11px;
-      cursor: pointer;
-      white-space: nowrap;
     }
     .calendar-grid {
       display: grid;
@@ -177,40 +154,37 @@
       min-height: 54px;
       position: relative;
     }
-    .day span.date {
-      font-weight: 600;
-      font-size: 11px;
-    }
-    .dot-row {
-      margin-top: 4px;
-      display: flex;
-      gap: 3px;
-      flex-wrap: wrap;
-    }
-    .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-    }
+    .day span.date { font-weight: 600; font-size: 11px; }
+    .dot-row { margin-top: 4px; display: flex; gap: 3px; flex-wrap: wrap; }
+    .dot { width: 7px; height: 7px; border-radius: 999px; }
     .dot-shift { background: #3b82f6; }
     .dot-law { background: #f59e0b; }
     .dot-trip { background: #ec4899; }
     .dot-doc { background: #10b981; }
     .dot-pay { background: #8b5cf6; }
-
-    footer {
+    .status-done {
+      border-left: 3px solid var(--success);
+      opacity: 0.85;
+    }
+    .status-done .item-title::before {
+      content: "✓ ";
+      color: var(--success);
+    }
+    .app-footer {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: #ffffff;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(14px);
       border-top: 1px solid #e5e7eb;
       display: flex;
       justify-content: space-around;
       padding: 5px 0;
       font-size: 11px;
+      z-index: 15;
     }
-    footer button {
+    .app-footer button {
       border: none;
       background: transparent;
       cursor: pointer;
@@ -220,28 +194,75 @@
       align-items: center;
       gap: 2px;
     }
-    footer button span.icon {
-      font-size: 14px;
+    .app-footer button span.icon { font-size: 14px; }
+    .app-footer button.active { color: var(--primary); font-weight: 600; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(16px);
+      background: rgba(15,23,42,0.35);
+      z-index: 30;
     }
-    footer button.active {
-      color: var(--primary);
+    .modal.hidden { display: none; }
+    .modal-content {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(24px);
+      border-radius: 18px;
+      padding: 18px 18px 14px 18px;
+      width: 92%;
+      max-width: 420px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.35);
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+    .modal-content h3 {
+      margin: 0 0 6px 0;
+      font-size: 15px;
       font-weight: 600;
     }
-
+    .modal-content p {
+      margin: 0 0 10px 0;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .modal-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .modal-content form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .modal-content input,
+    .modal-content select {
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 7px 10px;
+      font-size: 12px;
+      outline: none;
+      background: rgba(255,255,255,0.9);
+    }
+    .modal-content input:focus,
+    .modal-content select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.25);
+    }
     @media (max-width: 700px) {
-      header h1 {
-        font-size: 15px;
-      }
-      .nav-tabs {
-        max-width: 55%;
-      }
+      .app-header h1 { font-size: 15px; }
+      .nav-tabs { max-width: 58%; }
     }
   </style>
 </head>
 <body>
-  <header>
+  <header class="app-header">
     <h1>WorkFlow Calendar</h1>
-    <div class="nav-tabs">
+    <nav class="nav-tabs">
       <button class="tab-btn active" data-target="dashboard">Dashboard</button>
       <button class="tab-btn" data-target="calendar">Kalendár</button>
       <button class="tab-btn" data-target="duties">Povinnosti</button>
@@ -249,406 +270,621 @@
       <button class="tab-btn" data-target="documents">Doklady</button>
       <button class="tab-btn" data-target="trips">Cesty</button>
       <button class="tab-btn" data-target="regional">Regionálne</button>
-    </div>
+    </nav>
   </header>
 
   <main>
     <!-- DASHBOARD -->
-    <section id="dashboard" class="active">
+    <section id="dashboard" class="section active">
       <h2>Prehľad dňa</h2>
       <p class="sub">Dnešná zmena, najbližšie povinnosti, platby a cesty</p>
       <div class="row">
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Dnes</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Dnešná zmena – ranná</div>
-                <div class="item-sub">06:00 – 14:00 • 8 hodín</div>
-              </div>
-              <span class="pill">Zmena</span>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Platnosť občianskeho preukazu</div>
-                <div class="item-sub">Končí o 30 dní</div>
-              </div>
-              <span class="pill-warn pill">Doklad</span>
-            </div>
-          </div>
+          <div class="card-list" id="dashboard-today"></div>
         </div>
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Najbližšie povinnosti</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Daň z príjmu</div>
-                <div class="item-sub">Termín: 31. 03. • 20 dní do termínu</div>
-              </div>
-              <span class="pill">Legislatíva</span>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">STK – vozidlo BA123XY</div>
-                <div class="item-sub">O 14 dní • individuálny interval</div>
-              </div>
-              <span class="pill">Kontrola</span>
-            </div>
-          </div>
+          <div class="card-list" id="dashboard-duties"></div>
         </div>
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Najbližšie platby</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Leasing – 250 €</div>
-                <div class="item-sub">Splatnosť: o 3 dni</div>
-              </div>
-              <button class="btn-secondary" onclick="payNow('Leasing – 250 €')">Zaplatiť teraz</button>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Správa bytu – 120 €</div>
-                <div class="item-sub">Splatnosť: zajtra</div>
-              </div>
-              <button class="btn-secondary" onclick="payNow('Správa bytu – 120 €')">Zaplatiť teraz</button>
-            </div>
-          </div>
+          <div class="card-list" id="dashboard-payments"></div>
         </div>
       </div>
       <br />
       <h3 style="font-size:13px;margin:0 0 6px 0;">Najbližšia cesta</h3>
-      <div class="card-list">
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Služobná cesta – Košice</div>
-            <div class="item-sub">Zajtra • 09:00 • 3 h cesty • Hlavná 1, Košice</div>
-          </div>
-          <button class="btn-secondary" onclick="navigateMapy('Hlavná 1, Košice')">Mapy.cz</button>
-        </div>
-      </div>
+      <div class="card-list" id="dashboard-trip"></div>
     </section>
 
     <!-- KALENDÁR -->
-    <section id="calendar">
+    <section id="calendar" class="section">
       <h2>Kalendár</h2>
       <p class="sub">Zmeny, povinnosti, platby, doklady a cesty v jednom prehľade</p>
-      <div class="calendar-grid">
-        <div class="day">
-          <span class="date">1</span>
-          <div class="dot-row">
-            <div class="dot dot-shift" title="Zmena"></div>
-          </div>
-        </div>
-        <div class="day">
-          <span class="date">2</span>
-          <div class="dot-row">
-            <div class="dot dot-trip" title="Cesta"></div>
-          </div>
-        </div>
-        <div class="day">
-          <span class="date">3</span>
-          <div class="dot-row">
-            <div class="dot dot-law" title="Daň z príjmu"></div>
-          </div>
-        </div>
-        <div class="day">
-          <span class="date">4</span>
-          <div class="dot-row">
-            <div class="dot dot-doc" title="Doklad"></div>
-          </div>
-        </div>
-        <div class="day">
-          <span class="date">5</span>
-          <div class="dot-row">
-            <div class="dot dot-pay" title="Platba"></div>
-          </div>
-        </div>
-        <div class="day"><span class="date">6</span></div>
-        <div class="day"><span class="date">7</span></div>
-        <!-- ... doplniť ďalšie dni podľa potreby ... -->
-      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
       <br />
-      <button class="btn-primary">+ Pridať udalosť</button>
+      <button class="btn-primary" onclick="openAddModal('event')">+ Pridať udalosť</button>
     </section>
 
-    <!-- POVINNOSTI (ÚRADNÉ + KONTROLY + SERVIS) -->
-    <section id="duties">
+    <!-- POVINNOSTI -->
+    <section id="duties" class="section">
       <h2>Povinnosti</h2>
       <p class="sub">Daňové termíny, odvody, kontroly a servisné intervaly</p>
       <div class="row">
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Úradné termíny</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Daň z príjmu</div>
-                <div class="item-sub">Termín: 31. 03. • pripomienky: 30/14/7 dní</div>
-              </div>
-              <span class="pill">Daň</span>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">DPH – mesačne</div>
-                <div class="item-sub">Termín: 25. deň v mesiaci</div>
-              </div>
-              <span class="pill">DPH</span>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Zákonné odvody</div>
-                <div class="item-sub">Sociálne a zdravotné • 8. deň v mesiaci</div>
-              </div>
-              <span class="pill">Odvody</span>
-            </div>
-          </div>
+          <div class="card-list" id="duties-law"></div>
         </div>
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Kontroly a prehliadky</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">STK – BA123XY</div>
-                <div class="item-sub">Ďalšia: 05. 06. 2026 • pripomienky: 60/30/7 dní</div>
-              </div>
-              <span class="pill">STK</span>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Lekárska prehliadka – práca v noci</div>
-                <div class="item-sub">Ďalšia: 10. 11. 2026 • interval: 24 mesiacov</div>
-              </div>
-              <span class="pill">Lekár</span>
-            </div>
-          </div>
+          <div class="card-list" id="duties-checks"></div>
         </div>
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Servisné intervaly</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Výmena oleja – BA123XY</div>
-                <div class="item-sub">Posledná: 120 000 km • interval: 15 000 km</div>
-              </div>
-              <span class="pill">Servis</span>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Servis kotla</div>
-                <div class="item-sub">Posledný: 01. 10. 2025 • interval: 12 mesiacov</div>
-              </div>
-              <span class="pill">Domácnosť</span>
-            </div>
-          </div>
+          <div class="card-list" id="duties-service"></div>
         </div>
       </div>
       <br />
-      <button class="btn-primary">+ Pridať povinnosť</button>
+      <button class="btn-primary" onclick="openAddModal('duty')">+ Pridať povinnosť</button>
     </section>
 
     <!-- PLATBY -->
-    <section id="payments">
+    <section id="payments" class="section">
       <h2>Platby</h2>
       <p class="sub">Leasingy, úvery, správa bytu, energie a iné záväzky</p>
-      <div class="card-list">
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Leasing – 250 €</div>
-            <div class="item-sub">Splatnosť: 15. deň v mesiaci • stav: 3 dni do splatnosti</div>
-          </div>
-          <button class="btn-primary" onclick="payNow('Leasing – 250 €')">Zaplatiť teraz</button>
-        </div>
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Hypotéka – 480 €</div>
-            <div class="item-sub">Splatnosť: 20. deň v mesiaci • stav: 10 dní do splatnosti</div>
-          </div>
-          <button class="btn-secondary" onclick="payNow('Hypotéka – 480 €')">Zaplatiť teraz</button>
-        </div>
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Správa bytu – 120 €</div>
-            <div class="item-sub">Splatnosť: 5. deň v mesiaci • stav: zajtra</div>
-          </div>
-          <button class="btn-primary" onclick="payNow('Správa bytu – 120 €')">Zaplatiť teraz</button>
-        </div>
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Internet – 25 €</div>
-            <div class="item-sub">Splatnosť: 12. deň v mesiaci</div>
-          </div>
-          <button class="btn-secondary" onclick="payNow('Internet – 25 €')">Zaplatiť teraz</button>
-        </div>
-      </div>
+      <div class="card-list" id="payments-list"></div>
       <br />
-      <button class="btn-primary">+ Pridať platbu</button>
-      <p class="sub" style="margin-top:8px;">(V reálnej verzii tu môže byť QR platba alebo preklik do bankovej aplikácie.)</p>
+      <button class="btn-primary" onclick="openAddModal('payment')">+ Pridať platbu</button>
     </section>
 
     <!-- DOKLADY -->
-    <section id="documents">
+    <section id="documents" class="section">
       <h2>Osobné doklady</h2>
       <p class="sub">Sledovanie platnosti dokladov a pripomienky</p>
-      <div class="card-list">
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Občiansky preukaz</div>
-            <div class="item-sub">Platnosť do: 12. 04. 2026 • upozornenia: 90/30/7 dní</div>
-          </div>
-          <span class="pill-ok pill">Platný</span>
-        </div>
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Cestovný pas</div>
-            <div class="item-sub">Platnosť do: 01. 08. 2025 • upozornenia aktívne</div>
-          </div>
-          <span class="pill-warn pill">Čoskoro končí</span>
-        </div>
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Vodičský preukaz</div>
-            <div class="item-sub">Platnosť do: 10. 01. 2030</div>
-          </div>
-          <span class="pill-ok pill">Platný</span>
-        </div>
-      </div>
+      <div class="card-list" id="documents-list"></div>
       <br />
-      <button class="btn-primary">+ Pridať doklad</button>
+      <button class="btn-primary" onclick="openAddModal('document')">+ Pridať doklad</button>
     </section>
 
     <!-- CESTY -->
-    <section id="trips">
+    <section id="trips" class="section">
       <h2>Cesty a služobné výjazdy</h2>
       <p class="sub">Udalosti s adresou a navigáciou cez Mapy.cz</p>
-      <div class="card-list">
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Služobná cesta – Košice</div>
-            <div class="item-sub">Dátum: 02. 03. 2026 • Odchod: 06:00 • Hlavná 1, Košice</div>
-          </div>
-          <button class="btn-secondary" onclick="navigateMapy('Hlavná 1, Košice')">Navigovať cez Mapy.cz</button>
-        </div>
-        <div class="item">
-          <div class="item-main">
-            <div class="item-title">Kontrola STK – BA123XY</div>
-            <div class="item-sub">STK stanica: Priemyselná 10, Bratislava</div>
-          </div>
-          <button class="btn-secondary" onclick="navigateMapy('Priemyselná 10, Bratislava')">Navigovať cez Mapy.cz</button>
-        </div>
-      </div>
+      <div class="card-list" id="trips-list"></div>
       <br />
-      <button class="btn-primary">+ Pridať cestu</button>
+      <button class="btn-primary" onclick="openAddModal('trip')">+ Pridať cestu</button>
     </section>
 
     <!-- REGIONÁLNE KONTAKTY -->
-    <section id="regional">
+    <section id="regional" class="section">
       <h2>Regionálne kontakty</h2>
       <p class="sub">Úrady, pohotovosti, lekári a lekárne podľa regiónu</p>
       <div class="row">
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Úrady</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Daňový úrad Zvolen</div>
-                <div class="item-sub">Námestie SNP 1, Zvolen • Po–Pi 8:00–15:00</div>
-              </div>
-              <button class="btn-secondary" onclick="navigateMapy('Námestie SNP 1, Zvolen')">Navigovať</button>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Mestský úrad Zvolen</div>
-                <div class="item-sub">Námestie slobody 22, Zvolen</div>
-              </div>
-              <button class="btn-secondary" onclick="navigateMapy('Námestie slobody 22, Zvolen')">Navigovať</button>
-            </div>
-          </div>
+          <div class="card-list" id="regional-offices"></div>
         </div>
         <div class="col">
           <h3 style="font-size:13px;margin:0 0 6px 0;">Zdravotnícke služby</h3>
-          <div class="card-list">
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Pohotovosť – dospelí</div>
-                <div class="item-sub">Nemocnica Zvolen • nonstop</div>
-              </div>
-              <button class="btn-secondary" onclick="navigateMapy('Nemocnica Zvolen')">Navigovať</button>
-            </div>
-            <div class="item">
-              <div class="item-main">
-                <div class="item-title">Lekáreň – nonstop</div>
-                <div class="item-sub">Štúrova 5, Zvolen</div>
-              </div>
-              <button class="btn-secondary" onclick="navigateMapy('Štúrova 5, Zvolen')">Navigovať</button>
-            </div>
-          </div>
+          <div class="card-list" id="regional-health"></div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>
+  <footer class="app-footer">
     <button class="tab-btn-foot active" data-target="dashboard">
-      <span class="icon">🏠</span>
-      <span>Dashboard</span>
+      <span class="icon">🏠</span><span>Dashboard</span>
     </button>
     <button class="tab-btn-foot" data-target="calendar">
-      <span class="icon">📅</span>
-      <span>Kalendár</span>
+      <span class="icon">📅</span><span>Kalendár</span>
     </button>
     <button class="tab-btn-foot" data-target="duties">
-      <span class="icon">📌</span>
-      <span>Povinnosti</span>
+      <span class="icon">📌</span><span>Povinnosti</span>
     </button>
     <button class="tab-btn-foot" data-target="payments">
-      <span class="icon">💳</span>
-      <span>Platby</span>
+      <span class="icon">💳</span><span>Platby</span>
     </button>
     <button class="tab-btn-foot" data-target="documents">
-      <span class="icon">🪪</span>
-      <span>Doklady</span>
+      <span class="icon">🪪</span><span>Doklady</span>
     </button>
     <button class="tab-btn-foot" data-target="trips">
-      <span class="icon">🧭</span>
-      <span>Cesty</span>
+      <span class="icon">🧭</span><span>Cesty</span>
     </button>
   </footer>
 
+  <!-- DETAIL MODAL -->
+  <div id="detail-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="detail-title"></h3>
+      <p id="detail-info"></p>
+      <div class="modal-actions">
+        <button class="btn-primary" id="mark-done-btn">Označiť ako splnené</button>
+        <button class="btn-secondary" id="pay-now-btn" style="display:none;">Zaplatiť teraz</button>
+        <button class="btn-secondary" id="navigate-btn" style="display:none;">Navigovať cez Mapy.cz</button>
+        <button class="btn-secondary" id="delete-btn">Vymazať</button>
+        <button class="btn-close" onclick="closeDetailModal()">Zavrieť</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD MODAL -->
+  <div id="add-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="add-title">Nová položka</h3>
+      <form id="add-form">
+        <input type="text" id="add-name" placeholder="Názov" required />
+        <input type="date" id="add-date" required />
+        <input type="text" id="add-extra" placeholder="Doplňujúce info (suma, poznámka...)" />
+        <input type="text" id="add-address" placeholder="Adresa (pri cestách / úradoch)" />
+        <select id="add-type-specific">
+          <option value="">Typ (len pri udalosti)</option>
+          <option value="shift">Zmena</option>
+          <option value="law">Povinnosť</option>
+          <option value="payment">Platba</option>
+          <option value="document">Doklad</option>
+          <option value="trip">Cesta</option>
+        </select>
+        <button class="btn-primary" type="submit">Uložiť</button>
+      </form>
+      <div class="modal-actions">
+        <button class="btn-close" onclick="closeAddModal()">Zavrieť</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ČASŤ 2 ZAČÍNA TU: vlož sem nasledujúci <script> blok -->
   <script>
-    // Prepínanie sekcií (header tabs + footer)
-    const sections = document.querySelectorAll('main section');
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const footButtons = document.querySelectorAll('.tab-btn-foot');
+    // Jednoduchý model udalostí
+    let events = [];
+    let currentDetailId = null;
+    let currentAddContext = null;
 
-    function showSection(id) {
-      sections.forEach(sec => {
-        sec.classList.toggle('active', sec.id === id);
+    // Inicializačné dáta
+    function seedData() {
+      const today = new Date();
+      const d = (offset) => {
+        const dt = new Date(today);
+        dt.setDate(dt.getDate() + offset);
+        return dt.toISOString().slice(0,10);
+      };
+
+      events = [
+        { id: 1, type: 'shift', title: 'Dnešná zmena – ranná', date: d(0), extra: '06:00 – 14:00 • 8 hodín', status: 'open' },
+        { id: 2, type: 'document', title: 'Platnosť občianskeho preukazu', date: d(30), extra: 'Končí o 30 dní', status: 'open' },
+        { id: 3, type: 'law', title: 'Daň z príjmu', date: d(20), extra: 'Termín 31. 03. • pripomienky 30/14/7 dní', status: 'open' },
+        { id: 4, type: 'check', title: 'STK – BA123XY', date: d(14), extra: 'O 14 dní • individuálny interval', status: 'open' },
+        { id: 5, type: 'payment', title: 'Leasing – 250 €', date: d(3), extra: 'Splatnosť o 3 dni', status: 'open', payment: true },
+        { id: 6, type: 'payment', title: 'Správa bytu – 120 €', date: d(1), extra: 'Splatnosť zajtra', status: 'open', payment: true },
+        { id: 7, type: 'trip', title: 'Služobná cesta – Košice', date: d(1), extra: 'Zajtra • 09:00 • Hlavná 1, Košice', status: 'open', address: 'Hlavná 1, Košice' },
+        { id: 8, type: 'law', title: 'DPH – mesačne', date: d(6), extra: 'Termín: 25. deň v mesiaci', status: 'open' },
+        { id: 9, type: 'law', title: 'Zákonné odvody', date: d(8), extra: 'Sociálne a zdravotné • 8. deň v mesiaci', status: 'open' },
+        { id: 10, type: 'check', title: 'Lekárska prehliadka – práca v noci', date: d(200), extra: 'Interval 24 mesiacov', status: 'open' },
+        { id: 11, type: 'service', title: 'Výmena oleja – BA123XY', date: d(-10), extra: 'Posledná: 120 000 km • interval 15 000 km', status: 'open' },
+        { id: 12, type: 'service', title: 'Servis kotla', date: d(-120), extra: 'Posledný: 01. 10. 2025 • interval 12 mesiacov', status: 'open' },
+        { id: 13, type: 'document', title: 'Cestovný pas', date: d(150), extra: 'Platnosť do 01. 08. 2025', status: 'open' },
+        { id: 14, type: 'document', title: 'Vodičský preukaz', date: d(365*4), extra: 'Platnosť do 10. 01. 2030', status: 'open' },
+        { id: 15, type: 'payment', title: 'Hypotéka – 480 €', date: d(10), extra: 'Splatnosť o 10 dní', status: 'open', payment: true },
+        { id: 16, type: 'payment', title: 'Internet – 25 €', date: d(5), extra: 'Splatnosť o 5 dní', status: 'open', payment: true }
+      ];
+    }
+
+    // Pomocné funkcie
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('sk-SK');
+    }
+
+    function byDateAsc(a, b) {
+      return (a.date || '').localeCompare(b.date || '');
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderDuties();
+      renderPayments();
+      renderDocuments();
+      renderTrips();
+      renderRegional();
+      renderCalendar();
+    }
+
+    // DASHBOARD
+    function renderDashboard() {
+      const todayIso = new Date().toISOString().slice(0,10);
+      const todayBox = document.getElementById('dashboard-today');
+      const dutiesBox = document.getElementById('dashboard-duties');
+      const payBox = document.getElementById('dashboard-payments');
+      const tripBox = document.getElementById('dashboard-trip');
+
+      todayBox.innerHTML = '';
+      dutiesBox.innerHTML = '';
+      payBox.innerHTML = '';
+      tripBox.innerHTML = '';
+
+      const todayEvents = events.filter(e => e.date === todayIso).sort(byDateAsc);
+      todayEvents.forEach(e => todayBox.appendChild(createItemElement(e)));
+
+      const upcomingDuties = events.filter(e => ['law','check','service'].includes(e.type)).sort(byDateAsc).slice(0,3);
+      upcomingDuties.forEach(e => dutiesBox.appendChild(createItemElement(e)));
+
+      const upcomingPayments = events.filter(e => e.type === 'payment').sort(byDateAsc).slice(0,3);
+      upcomingPayments.forEach(e => payBox.appendChild(createItemElement(e)));
+
+      const upcomingTrips = events.filter(e => e.type === 'trip').sort(byDateAsc).slice(0,1);
+      upcomingTrips.forEach(e => tripBox.appendChild(createItemElement(e)));
+    }
+
+    // POVINNOSTI
+    function renderDuties() {
+      const lawBox = document.getElementById('duties-law');
+      const checksBox = document.getElementById('duties-checks');
+      const serviceBox = document.getElementById('duties-service');
+      lawBox.innerHTML = '';
+      checksBox.innerHTML = '';
+      serviceBox.innerHTML = '';
+
+      events.filter(e => e.type === 'law').sort(byDateAsc).forEach(e => lawBox.appendChild(createItemElement(e)));
+      events.filter(e => e.type === 'check').sort(byDateAsc).forEach(e => checksBox.appendChild(createItemElement(e)));
+      events.filter(e => e.type === 'service').sort(byDateAsc).forEach(e => serviceBox.appendChild(createItemElement(e)));
+    }
+
+    // PLATBY
+    function renderPayments() {
+      const box = document.getElementById('payments-list');
+      box.innerHTML = '';
+      events.filter(e => e.type === 'payment').sort(byDateAsc).forEach(e => box.appendChild(createItemElement(e)));
+    }
+
+    // DOKLADY
+    function renderDocuments() {
+      const box = document.getElementById('documents-list');
+      box.innerHTML = '';
+      events.filter(e => e.type === 'document').sort(byDateAsc).forEach(e => box.appendChild(createItemElement(e)));
+    }
+
+    // CESTY
+    function renderTrips() {
+      const box = document.getElementById('trips-list');
+      box.innerHTML = '';
+      events.filter(e => e.type === 'trip').sort(byDateAsc).forEach(e => box.appendChild(createItemElement(e)));
+    }
+
+    // REGIONÁLNE – statické demo
+    function renderRegional() {
+      const offices = document.getElementById('regional-offices');
+      const health = document.getElementById('regional-health');
+      offices.innerHTML = '';
+      health.innerHTML = '';
+
+      const officeItems = [
+        { title: 'Daňový úrad Zvolen', extra: 'Námestie SNP 1, Zvolen • Po–Pi 8:00–15:00', address: 'Námestie SNP 1, Zvolen' },
+        { title: 'Mestský úrad Zvolen', extra: 'Námestie slobody 22, Zvolen', address: 'Námestie slobody 22, Zvolen' }
+      ];
+      officeItems.forEach((o, idx) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.onclick = () => openDetailRegional(o.title, o.extra, o.address);
+        div.innerHTML = `
+          <div class="item-main">
+            <div class="item-title">${o.title}</div>
+            <div class="item-sub">${o.extra}</div>
+          </div>
+          <button class="btn-secondary" onclick="event.stopPropagation(); navigateFromCurrent('${o.address}')">Navigovať</button>
+        `;
+        offices.appendChild(div);
       });
-      tabButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.target === id);
-      });
-      footButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.target === id);
+
+      const healthItems = [
+        { title: 'Pohotovosť – dospelí', extra: 'Nemocnica Zvolen • nonstop', address: 'Nemocnica Zvolen' },
+        { title: 'Lekáreň – nonstop', extra: 'Štúrova 5, Zvolen', address: 'Štúrova 5, Zvolen' }
+      ];
+      healthItems.forEach((o, idx) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.onclick = () => openDetailRegional(o.title, o.extra, o.address);
+        div.innerHTML = `
+          <div class="item-main">
+            <div class="item-title">${o.title}</div>
+            <div class="item-sub">${o.extra}</div>
+          </div>
+          <button class="btn-secondary" onclick="event.stopPropagation(); navigateFromCurrent('${o.address}')">Navigovať</button>
+        `;
+        health.appendChild(div);
       });
     }
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => showSection(btn.dataset.target));
+    // KALENDÁR – jednoduchý mesiac
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const startWeekday = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 1; i < startWeekday; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day';
+        grid.appendChild(empty);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateIso = new Date(year, month, d).toISOString().slice(0,10);
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day';
+        dayDiv.innerHTML = `<span class="date">${d}</span><div class="dot-row"></div>`;
+        const dotRow = dayDiv.querySelector('.dot-row');
+        const dayEvents = events.filter(e => e.date === dateIso);
+        const types = new Set(dayEvents.map(e => e.type));
+        if (types.has('shift')) dotRow.appendChild(createDot('shift'));
+        if (types.has('law') || types.has('check') || types.has('service')) dotRow.appendChild(createDot('law'));
+        if (types.has('trip')) dotRow.appendChild(createDot('trip'));
+        if (types.has('document')) dotRow.appendChild(createDot('doc'));
+        if (types.has('payment')) dotRow.appendChild(createDot('pay'));
+
+        if (dayEvents.length > 0) {
+          dayDiv.style.cursor = 'pointer';
+          dayDiv.onclick = () => {
+            // otvoríme detail prvej udalosti v daný deň (na testovanie)
+            openDetail(dayEvents[0].id);
+          };
+        }
+
+        grid.appendChild(dayDiv);
+      }
+    }
+
+    function createDot(type) {
+      const div = document.createElement('div');
+      div.className = 'dot dot-' + (type === 'shift' ? 'shift' :
+                                    type === 'law' ? 'law' :
+                                    type === 'trip' ? 'trip' :
+                                    type === 'doc' ? 'doc' : 'pay');
+      return div;
+    }
+
+    // Vytvorenie item elementu
+    function createItemElement(e) {
+      const div = document.createElement('div');
+      div.className = 'item' + (e.status === 'done' ? ' status-done' : '');
+      div.onclick = () => openDetail(e.id);
+      const pill = getPillForType(e);
+      div.innerHTML = `
+        <div class="item-main">
+          <div class="item-title">${e.title}</div>
+          <div class="item-sub">${formatDate(e.date)}${e.extra ? ' • ' + e.extra : ''}</div>
+        </div>
+        ${pill}
+      `;
+      return div;
+    }
+
+    function getPillForType(e) {
+      let label = '';
+      let cls = 'pill';
+      if (e.type === 'shift') { label = 'Zmena'; }
+      else if (e.type === 'law') { label = 'Legislatíva'; }
+      else if (e.type === 'check') { label = 'Kontrola'; }
+      else if (e.type === 'service') { label = 'Servis'; }
+      else if (e.type === 'payment') { label = 'Platba'; }
+      else if (e.type === 'document') { label = 'Doklad'; }
+      else if (e.type === 'trip') { label = 'Cesta'; }
+
+      if (e.status === 'done') cls += ' pill-ok';
+      return `<span class="${cls}">${label}</span>`;
+    }
+
+    // DETAIL MODAL
+    function openDetail(id) {
+      const e = events.find(ev => ev.id === id);
+      if (!e) return;
+      currentDetailId = id;
+
+      const titleEl = document.getElementById('detail-title');
+      const infoEl = document.getElementById('detail-info');
+      const markBtn = document.getElementById('mark-done-btn');
+      const delBtn = document.getElementById('delete-btn');
+      const payBtn = document.getElementById('pay-now-btn');
+      const navBtn = document.getElementById('navigate-btn');
+
+      titleEl.textContent = e.title;
+      infoEl.textContent = `${formatDate(e.date)}${e.extra ? ' • ' + e.extra : ''}`;
+
+      payBtn.style.display = e.type === 'payment' ? 'inline-block' : 'none';
+      navBtn.style.display = e.type === 'trip' && e.address ? 'inline-block' : 'none';
+
+      markBtn.onclick = () => {
+        e.status = e.status === 'done' ? 'open' : 'done';
+        closeDetailModal();
+        renderAll();
+      };
+      delBtn.onclick = () => {
+        const idx = events.findIndex(ev => ev.id === id);
+        if (idx !== -1) events.splice(idx,1);
+        closeDetailModal();
+        renderAll();
+      };
+      payBtn.onclick = () => {
+        alert('Simulácia priamej platby: ' + e.title + '\\nV reálnej appke by sa otvorila banková appka alebo QR platba.');
+      };
+      navBtn.onclick = () => {
+        navigateFromCurrent(e.address);
+      };
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+      currentDetailId = null;
+    }
+
+    // DETAIL REGIONÁLNYCH KONTAKTOV
+    function openDetailRegional(title, extra, address) {
+      const titleEl = document.getElementById('detail-title');
+      const infoEl = document.getElementById('detail-info');
+      const markBtn = document.getElementById('mark-done-btn');
+      const delBtn = document.getElementById('delete-btn');
+      const payBtn = document.getElementById('pay-now-btn');
+      const navBtn = document.getElementById('navigate-btn');
+
+      currentDetailId = null;
+      titleEl.textContent = title;
+      infoEl.textContent = extra;
+
+      markBtn.style.display = 'none';
+      delBtn.style.display = 'none';
+      payBtn.style.display = 'none';
+      navBtn.style.display = address ? 'inline-block' : 'none';
+      navBtn.onclick = () => navigateFromCurrent(address);
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    // ADD MODAL
+    function openAddModal(context) {
+      currentAddContext = context;
+      document.getElementById('add-title').textContent =
+        context === 'payment' ? 'Nová platba' :
+        context === 'duty' ? 'Nová povinnosť' :
+        context === 'document' ? 'Nový doklad' :
+        context === 'trip' ? 'Nová cesta' :
+        'Nová udalosť';
+
+      document.getElementById('add-form').reset();
+      document.getElementById('add-modal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('add-modal').classList.add('hidden');
+      currentAddContext = null;
+    }
+
+    document.getElementById('add-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('add-name').value.trim();
+      const date = document.getElementById('add-date').value;
+      const extra = document.getElementById('add-extra').value.trim();
+      const address = document.getElementById('add-address').value.trim();
+      const typeSpecific = document.getElementById('add-type-specific').value;
+
+      if (!name || !date) return;
+
+      let type = 'event';
+      if (currentAddContext === 'payment') type = 'payment';
+      else if (currentAddContext === 'duty') type = 'law';
+      else if (currentAddContext === 'document') type = 'document';
+      else if (currentAddContext === 'trip') type = 'trip';
+      else if (currentAddContext === 'event' && typeSpecific) type = typeSpecific;
+
+      const newId = events.length ? Math.max(...events.map(ev => ev.id)) + 1 : 1;
+      const obj = { id: newId, type, title: name, date, extra, status: 'open' };
+      if (type === 'payment') obj.payment = true;
+      if (type === 'trip' && address) obj.address = address;
+
+      events.push(obj);
+      closeAddModal();
+      renderAll();
     });
-    footButtons.forEach(btn => {
-      btn.addEventListener('click', () => showSection(btn.dataset.target));
-    });
 
-    // Mock funkcia priamej platby
-    function payNow(label) {
-      alert('Simulácia platby: ' + label + '\nV reálnej appke by sa otvorila banková appka alebo QR platba.');
+    // PREPÍNANIE SEKCIÍ
+    function setupTabs() {
+      const sections = document.querySelectorAll('.section');
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const footButtons = document.querySelectorAll('.tab-btn-foot');
+
+      function showSection(id) {
+        sections.forEach(sec => sec.classList.toggle('active', sec.id === id));
+        tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.target === id));
+        footButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.target === id));
+      }
+
+      tabButtons.forEach(btn => btn.addEventListener('click', () => showSection(btn.dataset.target)));
+      footButtons.forEach(btn => btn.addEventListener('click', () => showSection(btn.dataset.target)));
     }
 
-    // Navigácia cez Mapy.cz (web verzia)
-    function navigateMapy(address) {
-      const url = 'https://mapy.cz/zakladni?q=' + encodeURIComponent(address);
-      window.open(url, '_blank');
+    // GPS NAVIGÁCIA
+    function navigateFromCurrent(address) {
+      if (!address) return;
+      if (!navigator.geolocation) {
+        alert('GPS poloha nie je podporovaná v tomto prehliadači.');
+        const url = 'https://mapy.cz/zakladni?q=' + encodeURIComponent(address);
+        window.open(url, '_blank');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const url = `https://mapy.cz/zakladni?planovani-trasy&rc=${lat},${lon}|${encodeURIComponent(address)}`;
+          window.open(url, '_blank');
+        },
+        err => {
+          alert('Nepodarilo sa získať GPS polohu. Otváram Mapy.cz len s cieľom.');
+          const url = 'https://mapy.cz/zakladni?q=' + encodeURIComponent(address);
+          window.open(url, '_blank');
+        }
+      );
     }
+
+    // INIT
+    seedData();
+    setupTabs();
+    renderAll();
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+
+  
+
+
+
+  
+
+
+  
